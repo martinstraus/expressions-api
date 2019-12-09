@@ -5,7 +5,8 @@
 	    "c = \"hello, world!\"",
 	    "d in [\"aa\", \"bb\"]",
 	    "e in [\"aa\", \"bb\"]",
-	    "def f(x)&lt;-x+1; f(a+b)"
+	    "def f(x)&lt;-x+1; f(a+b)",
+	    "def f(x)&lt;-length(lowercase(x))+b; f(c)"
 	],
 	"parameters": {
 		"a": 1,
@@ -15,4 +16,4 @@
 		"e": "xx"
 	}
 }
-</con:request><con:originalUri>http://localhost/expressions/evaluate</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:resource></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/></con:soapui-project>
+</con:request><con:originalUri>http://localhost/expressions/evaluate</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:resource></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
