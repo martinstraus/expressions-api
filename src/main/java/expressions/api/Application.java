@@ -1,7 +1,7 @@
 package expressions.api;
 
-import expressions.Evaluator;
-import expressions.SimpleEvaluator;
+import expressions.evaluator.Evaluator;
+import expressions.evaluator.SimpleEvaluator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
