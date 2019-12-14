@@ -6,7 +6,7 @@
 	    "d in [\"aa\", \"bb\"]",
 	    "e in [\"aa\", \"bb\"]",
 	    "def f(x)&lt;-x+1; f(a+b)",
-	    "def f(x)&lt;-length(lowercase(x))+b; f(c)"
+	    "def f(x, b)&lt;-length(lowercase(x))+b; f(c, 1)"
 	],
 	"parameters": {
 		"a": 1,
