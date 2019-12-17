@@ -15,7 +15,8 @@ create table functions_versions (
     version varchar(10) not null,
     definition text,
     primary key (id, version),
-    constraint functions_versions_fk1 foreign key (id) references functions(id)
+    constraint functions_versions_fk1 foreign key (id) references functions(id),
+    constraint functions_versions_uc unique (id, version)
 );
 
 alter table functions
