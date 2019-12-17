@@ -37,7 +37,7 @@ public class EndpointTest {
     @Autowired
     private WebApplicationContext wac;
     private MockMvc mock;
-    
+
     @BeforeEach
     public void beforeEach() {
         mock = MockMvcBuilders.webAppContextSetup(this.wac).build();
@@ -45,19 +45,52 @@ public class EndpointTest {
 
     @Test
     public void evaluateExpressions() throws Exception {
+        final String testExpression = "{\"expressions\": [\"a+b\"], \"parameters\": {\"a\":1, \"b\":2}}";
         mock.perform(
-                post("/expressions/evaluate")
-                        .content(payload())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
+            post("/expressions/evaluate")
+                .content(testExpression)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
         )
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andExpect(jsonPath("$[0].result", is(3)))
-                .andExpect(jsonPath("$[0].expression", is("a+b")));
+            .andExpect(status().isOk())
+            .andDo(print())
+            .andExpect(jsonPath("$[0].result", is(3)))
+            .andExpect(jsonPath("$[0].expression", is("a+b")));
     }
 
-    private String payload() {
-        return "{\"expressions\": [\"a+b\"], \"parameters\": {\"a\":1, \"b\":2}}";
+    @Test
+    public void createAndEvaluateFunction() throws Exception {
+        String functionId = new TestData().randomFunctionId();
+        String definition = String.format("def %1$s(x) <- x+1; %1$s(a)", functionId);
+        String definitionPayload = String.format("{\"definition\": \"%s\"}", definition);
+        mock.perform(post("/functions/" + functionId)
+            .content(definitionPayload)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk())
+            .andDo(print());
+        String contextPayload = String.format("{\"a\": 2}");
+        mock.perform(post("/functions/" + functionId + "/evaluation")
+            .content(contextPayload)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk())
+            .andDo(print())
+            .andExpect(jsonPath("$.result", is(3)))
+            .andExpect(jsonPath("$.expression", is(definition)));
     }
+    
+    
+    @Test
+    public void returns404IfFunctionDoesntExist() throws Exception {
+        String functionId = new TestData().randomFunctionId();
+        String contextPayload = String.format("{\"a\": 2}");
+        mock.perform(post("/functions/" + functionId + "/evaluation")
+            .content(contextPayload)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNotFound());
+    }
+
 }
