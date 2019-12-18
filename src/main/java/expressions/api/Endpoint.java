@@ -47,7 +47,7 @@ public class Endpoint {
     }
 
     @PostMapping("/functions/{id}")
-    public void evaluate(@PathVariable String id, @RequestBody NewFunction request) {
+    public void create(@PathVariable String id, @RequestBody NewFunction request) {
         functions.create(new Function.Id(id), request.getDefinition());
     }
 
@@ -86,6 +86,15 @@ public class Endpoint {
             locationHeader(String.format("/functions/%s/evaluations/%d", id, evaluationId)),
             HttpStatus.CREATED
         );
+    }
+
+    @PostMapping("/functions/{id}/versions/{version}")
+    public void update(
+        @PathVariable String id,
+        @PathVariable String version,
+        @RequestBody NewFunction request
+    ) throws NotFound, URISyntaxException, JsonProcessingException {
+        functions.update(new Function.Id(id), new Function.Version(version), request.getDefinition());
     }
 
     private HttpHeaders locationHeader(String value) throws URISyntaxException {

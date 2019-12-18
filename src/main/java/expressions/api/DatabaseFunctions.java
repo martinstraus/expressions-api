@@ -45,11 +45,10 @@ public class DatabaseFunctions implements Functions {
     @Transactional
     @Override
     public Function create(Function.Id id, String definition) {
-        String version = "0.0.1";
+        Function.Version version = new Function.Version("0.0.1");
         jdbc.update(INSERT_FUNCTION, id.value());
-        jdbc.update(INSERT_FUNCTION_VERSION, id.value(), version, definition);
-        jdbc.update(UPDATE_FUNCTION_VERSION, version, id.value());
-        return new DefaultFunction(id, new Function.Version(version), definition);
+        update(id, version, definition);
+        return new DefaultFunction(id, version, definition);
     }
 
     @Override
@@ -99,6 +98,13 @@ public class DatabaseFunctions implements Functions {
 
     private void lock(Function.Id id) {
         jdbc.query(SELECT_VERSION_FOR_UPDATE, (rs, row) -> null, id.value());
+    }
+
+    @Transactional
+    @Override
+    public void update(Function.Id id, Function.Version version, String definition) {
+        jdbc.update(INSERT_FUNCTION_VERSION, id.value(), version.value(), definition);
+        jdbc.update(UPDATE_FUNCTION_VERSION, version.value(), id.value());
     }
 
 }
