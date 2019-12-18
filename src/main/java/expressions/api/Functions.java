@@ -15,5 +15,7 @@ public interface Functions {
 
     Function findById(Function.Id id);
     
+    Function findByIdAndVersion(Function.Id id, Function.Version version);
+    
     int newEvaluation(Function function, String parameters);
 }

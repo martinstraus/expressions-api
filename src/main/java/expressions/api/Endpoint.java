@@ -69,6 +69,25 @@ public class Endpoint {
         );
     }
 
+    @PostMapping("/functions/{id}/versions/{version}/evaluations")
+    public ResponseEntity<Map<String, Object>> evaluate(
+        @PathVariable String id,
+        @PathVariable String version,
+        @RequestBody Map<String, Object> request
+    ) throws NotFound, URISyntaxException, JsonProcessingException {
+        Function function = functions.findById(new Function.Id(id));
+        if (function == null) {
+            throw new NotFound(String.format("Function %s not found.", id));
+        }
+        Map<String, Object> result = function.evaluate(request);
+        int evaluationId = functions.newEvaluation(function, new ObjectMapper().writeValueAsString(request));
+        return new ResponseEntity<>(
+            result(function.definition(), result),
+            locationHeader(String.format("/functions/%s/evaluations/%d", id, evaluationId)),
+            HttpStatus.CREATED
+        );
+    }
+
     private HttpHeaders locationHeader(String value) throws URISyntaxException {
         HttpHeaders headers = new HttpHeaders();
         headers.setLocation(new URI(value));

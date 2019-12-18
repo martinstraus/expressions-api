@@ -94,4 +94,27 @@ public class EndpointTest {
         ).andExpect(status().isNotFound());
     }
 
+    @Test
+    public void createAndEvaluateSpecificFunctionVersion() throws Exception {
+        String functionId = new TestData().randomFunctionId();
+        String definition = String.format("def %1$s(x) <- x+1; %1$s(a)", functionId);
+        String definitionPayload = String.format("{\"definition\": \"%s\"}", definition);
+        mock.perform(post("/functions/" + functionId)
+            .content(definitionPayload)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        )
+            .andExpect(status().isOk())
+            .andDo(print());
+        String contextPayload = String.format("{\"a\": 2}");
+        mock.perform(post("/functions/" + functionId + "/versions/1.0.0/evaluations")
+            .content(contextPayload)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isCreated())
+            .andDo(print())
+            .andExpect(header().string("Location", String.format("/functions/%s/evaluations/%d", functionId, 1)))
+            .andExpect(jsonPath("$.result", is(3)))
+            .andExpect(jsonPath("$.expression", is(definition)));
+    }
 }

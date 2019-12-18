@@ -25,6 +25,11 @@ public class DatabaseFunctions implements Functions {
         + "    functions_versions"
         + "    join functions on functions.id = functions_versions.id and functions.version = functions_versions.version"
         + " where functions.id = ?";
+    private static final String SELECT_BY_VERSION = "select functions.id, functions.version, functions_versions.definition"
+        + " from"
+        + "    functions_versions"
+        + "    join functions on functions.id = functions_versions.id and functions.version = functions_versions.version"
+        + " where functions.id = ? and functions_versions.version = ?";
     private static final String INSERT_FUNCTION = "insert into functions (id) values (?)";
     private static final String INSERT_FUNCTION_VERSION = "insert into functions_versions (id, version, definition) values (?,?,?)";
     private static final String UPDATE_FUNCTION_VERSION = "update functions set version = ? where id = ?";
@@ -49,8 +54,18 @@ public class DatabaseFunctions implements Functions {
 
     @Override
     public Function findById(Function.Id id) {
-        List<Function> result = jdbc.query(SELECT_LATEST_VERSION, this::transform, id.value());
+        return findOne(SELECT_LATEST_VERSION, id.value());
+    }
+
+    @Override
+    public Function findByIdAndVersion(Function.Id id, Function.Version version) {
+        return findOne(SELECT_BY_VERSION, id.value(), version.value());
+    }
+
+    private Function findOne(String query, Object... parameters) {
+        List<Function> result = jdbc.query(query, this::transform, parameters);
         return result.size() == 1 ? result.get(0) : null;
+
     }
 
     private Function transform(ResultSet rs, int row) throws SQLException {
