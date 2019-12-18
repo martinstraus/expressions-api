@@ -15,16 +15,23 @@ import java.util.Map;
 public class DefaultFunction implements Function {
     
     private final Function.Id id;
+    private final Function.Version version;
     private final String definition;
 
-    public DefaultFunction(Function.Id id, String definition) {
+    public DefaultFunction(Function.Id id,  Function.Version version, String definition) {
         this.id = id;
+        this.version = version;
         this.definition = definition;
     }
 
     @Override
     public Function.Id id() {
         return id;
+    }
+
+    @Override
+    public Version version() {
+        return version;
     }
 
     @Override

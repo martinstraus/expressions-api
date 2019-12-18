@@ -21,3 +21,15 @@ create table functions_versions (
 
 alter table functions
     add constraint functions_fk1 foreign key (id, version) references functions_versions(id, version);
+
+create table evaluations (
+    function varchar(100) not null,
+    version varchar(10) not null,
+    id int,
+    parameters json,
+    primary key (function, id),
+    constraint evaluations_fk1 foreign key (function, version) references functions_versions(id, version)
+);
+
+create or replace view evaluations_ids as
+    select function, max(id) +1 as next_value from evaluations group by function

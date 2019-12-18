@@ -8,6 +8,7 @@ package expressions.api;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,9 @@ public class DatabaseFunctions implements Functions {
     private static final String INSERT_FUNCTION = "insert into functions (id) values (?)";
     private static final String INSERT_FUNCTION_VERSION = "insert into functions_versions (id, version, definition) values (?,?,?)";
     private static final String UPDATE_FUNCTION_VERSION = "update functions set version = ? where id = ?";
+    private static final String SELECT_VERSION_FOR_UPDATE = "select id from functions where id = ? for update";
+    private static final String SELECT_NEXT_EXECUTION_ID = "select next_value from evaluations_ids where function = ?";
+    private static final String INSERT_EVALUATION = "insert into evaluations (function, version, id, parameters) values (?,?,?,?::json)";
     private final JdbcTemplate jdbc;
 
     public DatabaseFunctions(JdbcTemplate jdbc) {
@@ -40,7 +44,7 @@ public class DatabaseFunctions implements Functions {
         jdbc.update(INSERT_FUNCTION, id.value());
         jdbc.update(INSERT_FUNCTION_VERSION, id.value(), version, definition);
         jdbc.update(UPDATE_FUNCTION_VERSION, version, id.value());
-        return new DefaultFunction(id, definition);
+        return new DefaultFunction(id, new Function.Version(version), definition);
     }
 
     @Override
@@ -50,7 +54,36 @@ public class DatabaseFunctions implements Functions {
     }
 
     private Function transform(ResultSet rs, int row) throws SQLException {
-        return new DefaultFunction(new Function.Id(rs.getString("id")), rs.getString("definition"));
+        return new DefaultFunction(
+            new Function.Id(rs.getString("id")),
+            new Function.Version(rs.getString("version")),
+            rs.getString("definition")
+        );
+    }
+
+    @Transactional
+    @Override
+    public int newEvaluation(Function function, String parameters) {
+        lock(function.id());
+        int id = nextExecutionId(function);
+        jdbc.update(INSERT_EVALUATION, function.id().value(), function.version().value(), id, parameters);
+        return id;
+    }
+
+    private int nextExecutionId(Function function) {
+        try {
+            return jdbc.queryForObject(SELECT_NEXT_EXECUTION_ID, this::transformNextId, function.id().value());
+        } catch (EmptyResultDataAccessException ex) {
+            return 1;
+        }
+    }
+
+    private Integer transformNextId(ResultSet rs, int row) throws SQLException {
+        return rs.isLast() ? rs.getInt("next_value") : 1;
+    }
+
+    private void lock(Function.Id id) {
+        jdbc.query(SELECT_VERSION_FOR_UPDATE, (rs, row) -> null, id.value());
     }
 
 }

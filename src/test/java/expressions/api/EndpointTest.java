@@ -19,6 +19,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -71,17 +72,17 @@ public class EndpointTest {
             .andExpect(status().isOk())
             .andDo(print());
         String contextPayload = String.format("{\"a\": 2}");
-        mock.perform(post("/functions/" + functionId + "/evaluation")
+        mock.perform(post("/functions/" + functionId + "/evaluations")
             .content(contextPayload)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isOk())
+        ).andExpect(status().isCreated())
             .andDo(print())
+            .andExpect(header().string("Location", String.format("/functions/%s/evaluations/%d", functionId, 1)))
             .andExpect(jsonPath("$.result", is(3)))
             .andExpect(jsonPath("$.expression", is(definition)));
     }
-    
-    
+
     @Test
     public void returns404IfFunctionDoesntExist() throws Exception {
         String functionId = new TestData().randomFunctionId();

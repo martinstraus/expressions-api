@@ -14,4 +14,6 @@ public interface Functions {
     Function create(Function.Id id, String definition);
 
     Function findById(Function.Id id);
+    
+    int newEvaluation(Function function, String parameters);
 }

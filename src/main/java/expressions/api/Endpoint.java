@@ -5,12 +5,18 @@
  */
 package expressions.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import expressions.evaluator.Evaluator;
-import expressions.parser.Parser;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.stream.Collectors.toList;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,24 +40,39 @@ public class Endpoint {
     @PostMapping("/expressions/evaluate")
     public List<Map<String, Object>> evaluate(@RequestBody EvaluateRequest request) {
         return request
-                .getExpressions()
-                .stream()
-                .map((expression) -> result(expression, evaluator.evaluate(expression, request.getParameters())))
-                .collect(toList());
+            .getExpressions()
+            .stream()
+            .map((expression) -> result(expression, evaluator.evaluate(expression, request.getParameters())))
+            .collect(toList());
     }
 
     @PostMapping("/functions/{id}")
     public void evaluate(@PathVariable String id, @RequestBody NewFunction request) {
         functions.create(new Function.Id(id), request.getDefinition());
     }
-    
-    @PostMapping("/functions/{id}/evaluation")
-    public Map<String, Object> evaluate(@PathVariable String id, @RequestBody Map<String, Object> request) throws NotFound {
+
+    @PostMapping("/functions/{id}/evaluations")
+    public ResponseEntity<Map<String, Object>> evaluate(
+        @PathVariable String id,
+        @RequestBody Map<String, Object> request
+    ) throws NotFound, URISyntaxException, JsonProcessingException {
         Function function = functions.findById(new Function.Id(id));
         if (function == null) {
             throw new NotFound(String.format("Function %s not found.", id));
         }
-        return result(function.definition(), function.evaluate(request));
+        Map<String, Object> result = function.evaluate(request);
+        int evaluationId = functions.newEvaluation(function, new ObjectMapper().writeValueAsString(request));
+        return new ResponseEntity<>(
+            result(function.definition(), result),
+            locationHeader(String.format("/functions/%s/evaluations/%d", id, evaluationId)),
+            HttpStatus.CREATED
+        );
+    }
+
+    private HttpHeaders locationHeader(String value) throws URISyntaxException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(new URI(value));
+        return headers;
     }
 
     private Map<String, Object> result(String expression, Map<String, Object> result) {
