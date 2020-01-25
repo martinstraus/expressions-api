@@ -3,10 +3,11 @@
 	"expressions": [
 	    "a+b",
 	    "c = \"hello, world!\"",
-	    "d in [\"aa\", \"bb\"]",
-	    "e in [\"aa\", \"bb\"]",
+	    "d in {\"aa\", \"bb\"}",
+	    "e in {\"aa\", \"bb\"}",
 	    "def f(x)&lt;-x+1; f(a+b)",
-	    "def f(x, b)&lt;-length(lowercase(x))+b; f(c, 1)"
+	    "def f(x, b)&lt;-length(lowercase(x))+b; f(c, 1)",
+	    "[\"a\"&lt;-1]"
 	],
 	"parameters": {
 		"a": 1,
