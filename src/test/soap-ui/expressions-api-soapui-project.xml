@@ -3,18 +3,26 @@
 	"expressions": [
 	    "a+b",
 	    "c = \"hello, world!\"",
-	    "d in {\"aa\", \"bb\"}",
-	    "e in {\"aa\", \"bb\"}",
+	    "in (d, {\"aa\", \"bb\"})",
+	    "in (e, {\"aa\", \"bb\"})",
 	    "def f(x)&lt;-x+1; f(a+b)",
 	    "def f(x, b)&lt;-length(lowercase(x))+b; f(c, 1)",
-	    "[\"a\"&lt;-1]"
+	    "[\"a\"&lt;-1]",
+	    "f.a.b",
+	    "f.b"
 	],
 	"parameters": {
 		"a": 1,
 		"b": 2,
 		"c": "hello, world!",
 		"d": "aa",
-		"e": "xx"
+		"e": "xx",
+		"f": {
+			"a": {
+				"b": 5
+			},
+			"b": 6
+		}
 	}
 }
 </con:request><con:originalUri>http://localhost/expressions/evaluate</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:resource><con:resource name="functions" path="/functions" id="3d67584a-135f-481f-a281-44e29a8260ac"><con:settings/><con:parameters/><con:resource name="f_x" path="f_x" id="37974b89-cc9f-470e-bfb1-b9d1a71fcee6"><con:settings/><con:parameters/><con:resource name="evaluation" path="evaluations" id="6c27886d-3b60-4311-81cd-8c94e6179d0c"><con:settings/><con:parameters/><con:method name="Test" id="9f030918-ae67-4a40-9fd2-cdfa530d97e0" method="POST"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/json</con:mediaType><con:status>200 201</con:status><con:params/><con:element xmlns:eval="http://localhost/functions/f_x/evaluation">eval:Response</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json</con:mediaType><con:status>404 500</con:status><con:params/><con:element xmlns:eval="http://localhost/functions/f_x/evaluation">eval:Fault</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" id="19f35f60-bdc3-4e49-afd5-73d528f3049b" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
