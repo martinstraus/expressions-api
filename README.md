@@ -59,3 +59,9 @@ This will return:
         "expression": "f(x) <- x+1; f(a)",
         "result": 3
     }
+
+## User interface
+
+Enter [http://localhost:8080/index.html](http://localhost:8080/index.html):
+
+![Screenshot](doc/screenshot.png)
