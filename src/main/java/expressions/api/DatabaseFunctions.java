@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
- * @author martinstraus
+ * @author Martín Gaspar Straus <martinstraus@gmail.com>
  */
 @Component
 public class DatabaseFunctions implements Functions {

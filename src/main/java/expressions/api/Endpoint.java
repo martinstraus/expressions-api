@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author martinstraus
+ * @author Martín Gaspar Straus <martinstraus@gmail.com>
  */
 @RestController
 public class Endpoint {

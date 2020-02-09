@@ -2,7 +2,7 @@ package expressions.api;
 
 /**
  *
- * @author martinstraus
+ * @author Martín Gaspar Straus <martinstraus@gmail.com>
  */
 public interface Functions {
 

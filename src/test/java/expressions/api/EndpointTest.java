@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  *
- * @author martinstraus
+ * @author Martín Gaspar Straus <martinstraus@gmail.com>
  */
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration()

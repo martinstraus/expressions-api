@@ -4,7 +4,7 @@ import lombok.Data;
 
 /**
  *
- * @author martinstraus
+ * @author Martín Gaspar Straus <martinstraus@gmail.com>
  */
 @Data
 public class NewFunction {

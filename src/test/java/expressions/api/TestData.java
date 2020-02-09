@@ -9,7 +9,7 @@ import java.util.Random;
 
 /**
  *
- * @author martinstraus
+ * @author Martín Gaspar Straus <martinstraus@gmail.com>
  */
 public class TestData {
 

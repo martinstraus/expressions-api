@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  *
- * @author martinstraus
+ * @author Martín Gaspar Straus <martinstraus@gmail.com>
  */
 public interface Function {
 
